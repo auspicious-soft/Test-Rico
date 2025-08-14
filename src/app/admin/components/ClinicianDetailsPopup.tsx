@@ -63,6 +63,7 @@ const ClinicianDetailsPopup: React.FC<ClinicianDetailsPopupProps> = ({ isOpen, o
               <ClientJourneyTimeline
                 journeyData={journeyData?.data.data || []}
                 className="w-full"
+                userType="therapist"
               />
             )}
           </div>

@@ -85,6 +85,7 @@ const ClientDetailsPopup = (props: ClientDetailsPopupProps) => {
       <ClientJourneyTimeline
         journeyData={journeyData?.data.data || []}
         className="w-full"
+        userType="client"
       />
     )}
   </div>

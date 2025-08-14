@@ -1,4 +1,4 @@
-import { Calendar, CreditCard, User, UserCheck } from "lucide-react";
+import { Calendar, CreditCard, User, UserCheck, Users } from "lucide-react";
 
 // Journey Timeline Component
 interface JourneyItem {
@@ -7,7 +7,7 @@ interface JourneyItem {
   userType: string;
   message: string;
   date: string;
-  type: 'session' | 'appointment' | 'assignment' | 'registration' | 'subscription';
+  type: 'session' | 'appointment' | 'assignment' | 'registration' | 'subscription' | 'onboarding';
   relatedUserId?: {
     _id: string;
     firstName: string;
@@ -17,14 +17,47 @@ interface JourneyItem {
   createdAt: string;
   updatedAt: string;
 }
-export const ClientJourneyTimeline = ({ journeyData = [], className = '' }: { journeyData: JourneyItem[], className?: string }) => {
-  // Define all possible journey stages in order
-  const allStages = [
-    { type: 'registration', label: 'Sign Up', icon: User },
-    { type: 'subscription', label: 'Subscription', icon: CreditCard },
-    { type: 'assignment', label: 'Assignment', icon: UserCheck },
-    { type: 'session', label: '1st Session', icon: Calendar }
-  ];
+
+interface ClientJourneyTimelineProps {
+  journeyData?: JourneyItem[];
+  className?: string;
+  userType?: 'client' | 'therapist'; // Add userType prop
+}
+
+export const ClientJourneyTimeline = ({ 
+  journeyData = [], 
+  className = '',
+  userType = 'client' // Default to client
+}: ClientJourneyTimelineProps) => {
+  
+  // Define stages based on user type
+  const getStagesForUserType = (userType: 'client' | 'therapist') => {
+    const baseStages = [
+      { type: 'registration', label: 'Sign Up', icon: User },
+      { type: 'assignment', label: 'Assignment', icon: UserCheck },
+      { type: 'session', label: '1st Session', icon: Calendar }
+    ];
+
+    if (userType === 'therapist') {
+      // For therapists: Registration -> Onboarding -> Assignment -> 1st Session
+      return [
+        { type: 'registration', label: 'Sign Up', icon: User },
+        { type: 'onboarding', label: 'Onboarding', icon: Users },
+        { type: 'assignment', label: 'Assignment', icon: UserCheck },
+        { type: 'session', label: '1st Session', icon: Calendar }
+      ];
+    } else {
+      // For clients: Registration -> Subscription -> Assignment -> 1st Session
+      return [
+        { type: 'registration', label: 'Sign Up', icon: User },
+        { type: 'subscription', label: 'Subscription', icon: CreditCard },
+        { type: 'assignment', label: 'Assignment', icon: UserCheck },
+        { type: 'session', label: '1st Session', icon: Calendar }
+      ];
+    }
+  };
+
+  const allStages = getStagesForUserType(userType);
 
   // Create a map of completed stages with proper type checking
   const safeJourneyData = Array.isArray(journeyData) ? journeyData : [];
