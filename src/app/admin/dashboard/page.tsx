@@ -11,7 +11,7 @@ import AlertsTable from "../components/AlertsTable";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ClientNotifications } from "@/components/ClientNotifications";
+// import { ClientNotifications } from "@/components/ClientNotifications";
 
 const Home = () => {
   const session = useSession()
@@ -86,7 +86,6 @@ const Home = () => {
       icon: <OverviewIcon5 />,
       title: "Clinician Approved",
       value: finalData?.data?.cliniciansApproved,
-      // href: "/admin/clinician?status=approved",
     },
     {
       id: "6",
@@ -131,12 +130,12 @@ const Home = () => {
         <h1 className="font-antic text-[#283C63] text-[30px] leading-[1.2em]  lg:text-[40px] ">
           Welcome
         </h1>
-        <ClientNotifications
+        {/* <ClientNotifications
           alerts={alertsArray}
           handleRead={handleRead}
           isLoading={isPending}
           handleDelete={handleDelete}
-        />
+        /> */}
       </div>
 
 
