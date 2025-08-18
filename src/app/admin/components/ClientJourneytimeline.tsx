@@ -18,6 +18,9 @@ interface JourneyItem {
   updatedAt: string;
 }
 
+// Define the stage type
+type StageType = 'session' | 'appointment' | 'assignment' | 'registration' | 'subscription' | 'onboarding';
+
 interface ClientJourneyTimelineProps {
   journeyData?: JourneyItem[];
   className?: string;
@@ -30,29 +33,23 @@ export const ClientJourneyTimeline = ({
   userType = 'client' // Default to client
 }: ClientJourneyTimelineProps) => {
   
-  // Define stages based on user type
+  // Define stages based on user type with proper typing
   const getStagesForUserType = (userType: 'client' | 'therapist') => {
-    const baseStages = [
-      { type: 'registration', label: 'Sign Up', icon: User },
-      { type: 'assignment', label: 'Assignment', icon: UserCheck },
-      { type: 'session', label: '1st Session', icon: Calendar }
-    ];
-
     if (userType === 'therapist') {
       // For therapists: Registration -> Onboarding -> Assignment -> 1st Session
       return [
-        { type: 'registration', label: 'Sign Up', icon: User },
-        { type: 'onboarding', label: 'Onboarding', icon: Users },
-        { type: 'assignment', label: 'Assignment', icon: UserCheck },
-        { type: 'session', label: '1st Session', icon: Calendar }
+        { type: 'registration' as const, label: 'Sign Up', icon: User },
+        { type: 'onboarding' as const, label: 'Onboarding', icon: Users },
+        { type: 'assignment' as const, label: 'Assignment', icon: UserCheck },
+        { type: 'session' as const, label: '1st Session', icon: Calendar }
       ];
     } else {
       // For clients: Registration -> Subscription -> Assignment -> 1st Session
       return [
-        { type: 'registration', label: 'Sign Up', icon: User },
-        { type: 'subscription', label: 'Subscription', icon: CreditCard },
-        { type: 'assignment', label: 'Assignment', icon: UserCheck },
-        { type: 'session', label: '1st Session', icon: Calendar }
+        { type: 'registration' as const, label: 'Sign Up', icon: User },
+        { type: 'subscription' as const, label: 'Subscription', icon: CreditCard },
+        { type: 'assignment' as const, label: 'Assignment', icon: UserCheck },
+        { type: 'session' as const, label: '1st Session', icon: Calendar }
       ];
     }
   };
@@ -61,7 +58,7 @@ export const ClientJourneyTimeline = ({
 
   // Create a map of completed stages with proper type checking
   const safeJourneyData = Array.isArray(journeyData) ? journeyData : [];
-  const completedStages = new Set(safeJourneyData.map(item => item.type));
+  const completedStages = new Set<StageType>(safeJourneyData.map(item => item.type));
 
   // Find the latest stage index
   const latestStageIndex = Math.max(
@@ -79,7 +76,7 @@ export const ClientJourneyTimeline = ({
     return 'pending';
   };
 
-  const getStageDate = (stageType: string) => {
+  const getStageDate = (stageType: StageType) => {
     const journeyItem = safeJourneyData.find(item => item.type === stageType);
     if (journeyItem) {
       return new Date(journeyItem.date).toLocaleDateString();
@@ -87,7 +84,7 @@ export const ClientJourneyTimeline = ({
     return null;
   };
 
-  const getRelatedUser = (stageType: string) => {
+  const getRelatedUser = (stageType: StageType) => {
     const journeyItem = safeJourneyData.find(item => item.type === stageType);
     if (journeyItem?.relatedUserId) {
       return `${journeyItem.relatedUserId.firstName} ${journeyItem.relatedUserId.lastName}`;
