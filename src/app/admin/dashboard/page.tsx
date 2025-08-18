@@ -11,8 +11,8 @@ import AlertsTable from "../components/AlertsTable";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-// import { ClientNotifications } from "@/components/ClientNotifications";
- 
+import { ClientNotifications } from "@/components/ClientNotifications";
+
 const Home = () => {
   const session = useSession()
   const [isPending, startTransition] = useTransition();

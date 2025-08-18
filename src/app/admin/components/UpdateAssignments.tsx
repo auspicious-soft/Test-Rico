@@ -2,9 +2,11 @@ import { ButtonArrow } from '@/utils/svgicons';
 import React, { useState, useTransition, useEffect } from 'react';
 import Modal from "react-modal";
 import CustomSelect from './CustomSelect';
-import { updateAssignments } from '@/services/admin/admin-service';
+import { GetTherapistsData, updateAssignments } from '@/services/admin/admin-service';
 import { toast } from 'sonner';
 import useTherapists from '@/utils/useTherapists';
+import useSWR from 'swr';
+import CustomSelectProp from './CustomSelectProp';
 
 interface AssignmentProps {
     isOpen: boolean;
@@ -14,7 +16,21 @@ interface AssignmentProps {
 }
 
 const UpdateAssignments: React.FC<AssignmentProps> = ({ isOpen, onRequestClose, row, mutate }) => {
-    const { therapistData, isLoading, error } = useTherapists(true);
+    
+      const { data: therapistDataResponse, error, isLoading } = useSWR(
+        isOpen ? `/admin/therapists/match/${row._id}` : null,
+        GetTherapistsData
+    );
+
+    const therapistData = therapistDataResponse?.data?.data.map((therapist: any) => ({
+        value: therapist._id,
+        label: therapist.name,
+        matchScore: therapist.matchScore,
+        bestMatch: therapist.bestMatch,
+        availabilityMatch: therapist.availabilityMatch,
+        specialtyMatchCount: therapist.specialtyMatchCount,
+    })) || [];
+    console.log('therapistData:', therapistData);
     const [selectedClinician, setSelectedClinician] = useState<any>(null);
     const [selectedPeers, setSelectedPeers] = useState<any>([]);
     const [formData, setFormData] = useState<any>({
@@ -122,17 +138,18 @@ const UpdateAssignments: React.FC<AssignmentProps> = ({ isOpen, onRequestClose, 
             <form onSubmit={handleFormSubmit}>
                 <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                        <CustomSelect
+                         <CustomSelectProp
                             name="Assign Clinician"
                             value={selectedClinician}
                             options={therapistData}
                             onChange={handleSelectChange}
                             placeholder="Select"
+                            
                             required={false}
                         />
                     </div>
                     <div>
-                        <CustomSelect
+                        <CustomSelectProp
                             name="Assign Peer Support"
                             value={selectedPeers}
                             options={therapistData}

@@ -85,6 +85,7 @@ const UnassignedClientTable: React.FC<UnassignedPageProps> = ({
 
   const openModal = (row: any) => {
     setCurrentRow(row);
+    console.log('row:', row);
     setUpdateAssignment(true);
   };
 
@@ -129,16 +130,17 @@ const UnassignedClientTable: React.FC<UnassignedPageProps> = ({
                       ? `${row.therapistId.firstName} ${row.therapistId.lastName}`
                       : 'No Clinician Assigned'}
                   </td>
-                  <td className="text-center">
-                    {row.planType ? `${row.planType}` : '-'}
-                  </td>
-                  <td>
+                   <td>
                     {row.peerSupportIds && row.peerSupportIds.length > 0 ? (
                       <span>{row.peerSupportIds[0].id}</span>
                     ) : (
                       'No peer supports assigned'
                     )}
                   </td>
+                  <td className="text-center">
+                    {row.planType ? `${row.planType}` : '-'}
+                  </td>
+                 
                   <td>
                     <button
                       onClick={() => openModal(row)}
